@@ -301,3 +301,1217 @@
 2025-08-24 20:34:11,832 - INFO - Sensor read successful: Indoor=(17, 28, 32), Outdoor=(16, 24, 26)
 2025-08-24 20:34:21,833 - INFO - Sensor read successful: Indoor=(19, 30, 33), Outdoor=(15, 23, 24)
 2025-08-24 20:34:22,840 - INFO - Program stopped by user
+2025-08-24 23:20:17,304 - INFO - Sensor read successful: Indoor=(7, 10, 10), Outdoor=(5, 8, 8)
+2025-08-24 23:20:27,306 - INFO - Sensor read successful: Indoor=(7, 9, 9), Outdoor=(4, 6, 6)
+2025-08-24 23:20:37,307 - INFO - Sensor read successful: Indoor=(6, 9, 9), Outdoor=(3, 6, 7)
+2025-08-24 23:20:47,308 - INFO - Sensor read successful: Indoor=(7, 9, 11), Outdoor=(3, 6, 7)
+2025-08-24 23:20:57,308 - INFO - Sensor read successful: Indoor=(8, 11, 12), Outdoor=(3, 6, 7)
+2025-08-24 23:21:07,309 - INFO - Sensor read successful: Indoor=(8, 10, 12), Outdoor=(4, 7, 8)
+2025-08-24 23:21:17,309 - INFO - Sensor read successful: Indoor=(7, 11, 12), Outdoor=(4, 6, 8)
+2025-08-24 23:21:27,309 - INFO - Sensor read successful: Indoor=(7, 10, 11), Outdoor=(4, 6, 8)
+2025-08-24 23:21:37,310 - INFO - Sensor read successful: Indoor=(8, 10, 12), Outdoor=(5, 6, 8)
+2025-08-24 23:21:47,311 - INFO - Sensor read successful: Indoor=(6, 9, 11), Outdoor=(5, 7, 8)
+2025-08-24 23:21:57,312 - INFO - Sensor read successful: Indoor=(7, 10, 11), Outdoor=(5, 6, 8)
+2025-08-24 23:22:07,312 - INFO - Sensor read successful: Indoor=(6, 9, 10), Outdoor=(5, 7, 8)
+2025-08-24 23:22:17,313 - INFO - Sensor read successful: Indoor=(6, 9, 11), Outdoor=(4, 7, 7)
+2025-08-24 23:22:27,804 - INFO - Sensor read successful: Indoor=(6, 10, 10), Outdoor=(4, 6, 6)
+2025-08-24 23:22:38,191 - INFO - Sensor read successful: Indoor=(5, 8, 10), Outdoor=(4, 7, 7)
+2025-08-24 23:22:48,192 - INFO - Sensor read successful: Indoor=(5, 8, 10), Outdoor=(5, 7, 7)
+2025-08-24 23:22:58,192 - INFO - Sensor read successful: Indoor=(6, 8, 12), Outdoor=(5, 8, 8)
+2025-08-24 23:23:08,193 - INFO - Sensor read successful: Indoor=(6, 8, 12), Outdoor=(5, 8, 8)
+2025-08-24 23:37:05,865 - INFO - Firestore sink enabled (collection='pm_readings', batch=50, flush=30s)
+2025-08-24 23:37:05,866 - INFO - Program started.
+2025-08-24 23:37:06,044 - INFO - Sensor OK: Indoor=(7.0, 9.0, 11.0), Outdoor=(5.0, 7.0, 7.0)
+2025-08-24 23:37:16,045 - INFO - Sensor OK: Indoor=(7.0, 10.0, 12.0), Outdoor=(5.0, 7.0, 7.0)
+2025-08-24 23:37:26,046 - INFO - Sensor OK: Indoor=(7.0, 10.0, 12.0), Outdoor=(5.0, 7.0, 7.0)
+2025-08-24 23:37:36,047 - INFO - Sensor OK: Indoor=(7.0, 10.0, 12.0), Outdoor=(5.0, 7.0, 8.0)
+2025-08-24 23:37:36,467 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:36,579 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:36,698 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:36,867 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:37,000 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:37,214 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:37,481 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:37,602 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:37,796 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:38,378 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:39,066 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:39,930 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:40,020 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:40,523 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:40,601 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:41,550 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:42,925 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,356 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,455 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,530 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,611 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,749 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:46,861 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:47,201 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:47,352 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-24 23:37:47,499 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7fff2e3e4910>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:22,208 - INFO - Firestore sink enabled (collection='pm_readings', batch=50, flush=30s)
+2025-08-25 00:09:22,208 - INFO - Program started.
+2025-08-25 00:09:22,410 - INFO - Sensor OK: Indoor=(5.0, 9.0, 9.0), Outdoor=(5.0, 8.0, 8.0)
+2025-08-25 00:09:32,410 - INFO - Sensor OK: Indoor=(5.0, 9.0, 9.0), Outdoor=(5.0, 7.0, 7.0)
+2025-08-25 00:09:42,411 - INFO - Sensor OK: Indoor=(5.0, 8.0, 8.0), Outdoor=(4.0, 6.0, 6.0)
+2025-08-25 00:09:52,414 - INFO - Sensor OK: Indoor=(5.0, 8.0, 8.0), Outdoor=(4.0, 6.0, 6.0)
+2025-08-25 00:09:52,790 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:52,924 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:52,998 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:53,133 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:53,262 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:53,562 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:53,782 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:55,096 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:55,626 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:55,728 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:56,178 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:57,232 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:57,892 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:58,914 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:58,973 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,083 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,283 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,419 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,539 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,662 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:09:59,906 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:10:00,014 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:10:00,169 - ERROR - AuthMetadataPluginCallback "<google.auth.transport.grpc.AuthMetadataPlugin object at 0x7ffef9bf4fd0>" raised exception!
+Traceback (most recent call last):
+  File "/home/chon/project/env/lib/python3.11/site-packages/grpc/_plugin_wrapping.py", line 105, in __call__
+    self._metadata_plugin(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 95, in __call__
+    callback(self._get_authorization_headers(context), None)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/transport/grpc.py", line 81, in _get_authorization_headers
+    self._credentials.before_request(
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 239, in before_request
+    self._blocking_refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/auth/credentials.py", line 202, in _blocking_refresh
+    self.refresh(request)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/service_account.py", line 448, in refresh
+    access_token, expiry, _ = _client.jwt_grant(
+                              ^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 299, in jwt_grant
+    response_data = _token_endpoint_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 270, in _token_endpoint_request
+    _handle_error_response(response_data, retryable_error)
+  File "/home/chon/project/env/lib/python3.11/site-packages/google/oauth2/_client.py", line 69, in _handle_error_response
+    raise exceptions.RefreshError(
+google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {'error': 'invalid_grant', 'error_description': 'Invalid JWT Signature.'})
+2025-08-25 00:56:50,397 - INFO - RTDB sink enabled (root='/pm_readings', batch=50, flush=30s)
+2025-08-25 00:56:50,397 - INFO - Program started.
+2025-08-25 00:57:20,973 - INFO - RTDB flush OK (7 rows)
+2025-08-25 00:57:51,060 - INFO - RTDB flush OK (6 rows)
+2025-08-25 00:58:21,147 - INFO - RTDB flush OK (6 rows)
+2025-08-25 00:58:51,229 - INFO - RTDB flush OK (6 rows)
+2025-08-25 00:58:51,987 - INFO - RTDB flush OK (1 rows)
+2025-08-25 00:58:51,987 - INFO - Cleanup done.
