@@ -1,0 +1,11 @@
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyA1frqEUiQ7h4wRHGL_1sLa_B1eSwOe9yI",
+  authDomain: "pm25-dashborad.firebaseapp.com",
+  databaseURL: "https://pm25-dashborad-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "pm25-dashborad",
+  storageBucket: "pm25-dashborad.firebasestorage.app",
+  messagingSenderId: "756328975345",
+  appId: "1:756328975345:web:ce49de954576cae7b99250",
+  measurementId: "G-ZRP3DXST7Y"
+};
