@@ -1,51 +1,125 @@
 import tkinter as tk
 from tkinter import ttk
 import matplotlib
-matplotlib.rcParams['font.family'] = 'DejaVu Sans'  # English-safe font
+# Force an English-safe font to avoid Thai glyph warnings in Matplotlib
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from datetime import datetime
+
+# ---------------- Serial (PMS3005) ----------------
 import serial
 
-# ---------------- Serial Config (no CSV) ----------------
-# Adjust ports if different on your hardware
-INDOOR_PORT = "/dev/ttyAMA0"   # GPIO14/15
-OUTDOOR_PORT = "/dev/ttyAMA2"  # GPIO4/5
+INDOOR_PORT = "/dev/ttyAMA0"   # change if needed
+OUTDOOR_PORT = "/dev/ttyAMA2"  # change if needed
 BAUDRATE = 9600
 TIMEOUT = 1
 
-# PMS3005 reader
 class PMSReader:
+    """Read PMS3005 from a given serial port. Returns dict with pm1, pm25, pm10."""
     def __init__(self, port: str):
+        self.port = port
         try:
             self.ser = serial.Serial(port, baudrate=BAUDRATE, timeout=TIMEOUT)
             self.ok = True
+            print(f"[PMS] Opened {port}")
         except Exception as e:
             print(f"[WARN] Cannot open serial {port}: {e}")
             self.ser = None
             self.ok = False
 
     def read_once(self):
-        """Return dict {pm1, pm25, pm10} or fallback zeros if not available."""
         if not self.ok:
             return {"pm1": 0.0, "pm25": 0.0, "pm10": 0.0}
         try:
             data = self.ser.read(32)
             if len(data) == 32 and data[0] == 0x42 and data[1] == 0x4D:
-                pm1   = int.from_bytes(data[4:6],  'big')
-                pm25  = int.from_bytes(data[6:8],  'big')
-                pm10  = int.from_bytes(data[8:10], 'big')
+                pm1  = int.from_bytes(data[4:6],  'big')
+                pm25 = int.from_bytes(data[6:8],  'big')
+                pm10 = int.from_bytes(data[8:10], 'big')
                 return {"pm1": float(pm1), "pm25": float(pm25), "pm10": float(pm10)}
         except Exception as e:
-            print(f"[WARN] Serial read error: {e}")
+            print(f"[WARN] Serial read error on {self.port}: {e}")
         return {"pm1": 0.0, "pm25": 0.0, "pm10": 0.0}
 
     def close(self):
         try:
             if self.ser:
                 self.ser.close()
+                print(f"[PMS] Closed {self.port}")
         except Exception:
             pass
+
+# ---------------- GPIO (Relays) ----------------
+ACTIVE_LOW = True                   # Most relay boards are active LOW; set True to make ON=LOW
+RELAY_PINS = [17, 18, 27, 22]       # BCM pin numbers
+
+# Prefer gpiozero with lgpio on Pi 5 / Bookworm
+try:
+    from gpiozero import DigitalOutputDevice, Device
+    try:
+        from gpiozero.pins.lgpio import LGPIOFactory
+        Device.pin_factory = LGPIOFactory()
+        _gpio_backend = 'gpiozero(lgpio)'
+    except Exception:
+        _gpio_backend = 'gpiozero(auto)'
+    _gpio_available = True
+except Exception as e:
+    print(f"[WARN] gpiozero not available: {e}")
+    _gpio_available = False
+    _gpio_backend = 'mock'
+
+class RelayManager:
+    def __init__(self, pins, active_low=True):
+        self.active_low = active_low
+        self.devs = {}
+        self.mock = not _gpio_available
+        if self.mock:
+            print("[GPIO] Using MOCK backend (no hardware)")
+        else:
+            print(f"[GPIO] Using {_gpio_backend}")
+        for p in pins:
+            if self.mock:
+                self.devs[p] = False  # False=OFF, True=ON
+            else:
+                dev = DigitalOutputDevice(p, active_high=(not active_low), initial_value=False)
+                self.devs[p] = dev
+
+    def set(self, pin, on: bool):
+        if self.mock:
+            self.devs[pin] = on
+            print(f"[MOCK] Pin {pin} => {'ON' if on else 'OFF'}")
+        else:
+            d = self.devs[pin]
+            d.on() if on else d.off()
+
+    def toggle(self, pin):
+        if self.mock:
+            self.set(pin, not self.devs[pin])
+        else:
+            d = self.devs[pin]
+            d.off() if d.value else d.on()
+
+    def all_on(self):
+        for p in list(self.devs.keys()):
+            self.set(p, True)
+
+    def all_off(self):
+        for p in list(self.devs.keys()):
+            self.set(p, False)
+
+    def is_on(self, pin):
+        if self.mock:
+            return bool(self.devs[pin])
+        return bool(self.devs[pin].value)
+
+    def close(self):
+        if not self.mock:
+            for dev in self.devs.values():
+                try: dev.close()
+                except: pass
+            try: Device.pin_factory.close()
+            except: pass
 
 # ---------------- UI Helpers ----------------
 PM25_BANDS = [
@@ -76,7 +150,6 @@ class PM25Badge(ttk.Frame):
     def __init__(self, master):
         super().__init__(master, padding=(10, 6))
         self.columnconfigure(1, weight=1)
-        # Use explicit bg to avoid ttk background issues
         self.bgcolor = "#0F0F1A"
         self.dot = tk.Canvas(self, width=14, height=14, highlightthickness=0, bg=self.bgcolor)
         self.label = ttk.Label(self, text="-", font=("Kanit", 12, "bold"))
@@ -84,7 +157,6 @@ class PM25Badge(ttk.Frame):
         self.dot.grid(row=0, column=0, padx=(0, 8))
         self.label.grid(row=0, column=1, sticky="w")
         self.bar.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(6, 0))
-
     def update_badge(self, value: float):
         text, color = pm25_category(value)
         self.label.config(text=text)
@@ -106,17 +178,23 @@ class Section(ttk.Labelframe):
         self.pm10.grid(row=0, column=2, padx=6, pady=6, sticky="nsew")
         self.badge.grid(row=1, column=0, columnspan=3, sticky="ew", padx=6, pady=(0, 6))
 
+# ---------------- Main App ----------------
 class PMDashboard:
     def __init__(self, root):
         self.root = root
         self.root.title("Air Quality Dashboard")
-        self.root.geometry("1280x820")
+        self.root.geometry("1280x860")
         self.job = None
+        self.auto_on = False   # current auto relay state (are relays ON due to auto?)
+
         self._setup_style()
 
-        # Serial readers (no CSV)
+        # Serial readers
         self.reader_indoor = PMSReader(INDOOR_PORT)
         self.reader_outdoor = PMSReader(OUTDOOR_PORT)
+
+        # Relays
+        self.relays = RelayManager(RELAY_PINS, active_low=ACTIVE_LOW)
 
         # Header
         header = ttk.Frame(root, padding=(16, 12))
@@ -126,7 +204,7 @@ class PMDashboard:
         title.pack(side="left")
         self.last_lbl.pack(side="right")
 
-        # Content
+        # Content (two sections)
         content = ttk.Frame(root, padding=(12, 0))
         content.pack(fill="both", expand=True)
         content.columnconfigure(0, weight=1)
@@ -136,7 +214,7 @@ class PMDashboard:
         self.indoor.grid(row=0, column=0, padx=8, pady=8, sticky="nsew")
         self.outdoor.grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
 
-        # Trend Chart (English labels)
+        # Trend chart
         chart_frame = ttk.Frame(root, padding=(12, 4))
         chart_frame.pack(fill="both", expand=True)
         self.indoor_history, self.outdoor_history, self.time_history = [], [], []
@@ -149,8 +227,14 @@ class PMDashboard:
         self.canvas = FigureCanvasTkAgg(self.fig, master=chart_frame)
         self.canvas.get_tk_widget().pack(fill="both", expand=True)
 
-        # schedule updates
-        self.update_data()  # immediate first draw
+        # Relay control panel
+        self._build_relay_panel()
+
+        # Auto control panel
+        self._build_auto_panel()
+
+        # Start updates
+        self.update_data()
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
 
     def _setup_style(self):
@@ -164,24 +248,108 @@ class PMDashboard:
         style.configure("TLabelframe", background="#0F0F1A", foreground="white", font=("Kanit", 16, "bold"))
         style.configure("TLabelframe.Label", background="#0F0F1A", foreground="#e0e0e0")
         style.configure("TLabel", background="#0F0F1A", foreground="white")
+        style.configure("TButton", background="#1e1e2e", foreground="white")
+        style.configure("TCheckbutton", background="#0F0F1A", foreground="white")
         style.configure("TProgressbar", troughcolor="#1c1c2b", background="#00bcd4", bordercolor="#1c1c2b", lightcolor="#00bcd4", darkcolor="#00bcd4")
 
+    def _build_relay_panel(self):
+        panel = ttk.Labelframe(self.root, text="Relay Control", padding=12)
+        panel.pack(fill="x", padx=12, pady=(0, 8))
+        row = 0
+        self.relay_btns = {}
+        for idx, pin in enumerate(RELAY_PINS):
+            btn = ttk.Button(panel, text=f"GPIO {pin}: OFF", command=lambda p=pin: self._toggle_pin(p))
+            btn.grid(row=row, column=idx, padx=6, pady=6, sticky="ew")
+            self.relay_btns[pin] = btn
+        row += 1
+        ttk.Button(panel, text="All ON", command=self._all_on).grid(row=row, column=0, padx=6, pady=6, sticky="ew")
+        ttk.Button(panel, text="All OFF", command=self._all_off).grid(row=row, column=1, padx=6, pady=6, sticky="ew")
+        self.backend_lbl = ttk.Label(panel, text=f"GPIO backend: {_gpio_backend} | ActiveLow={ACTIVE_LOW}")
+        self.backend_lbl.grid(row=row, column=2, columnspan=2, sticky="e", padx=6)
+
+    def _build_auto_panel(self):
+        panel = ttk.Labelframe(self.root, text="Auto Control (by PM2.5)", padding=12)
+        panel.pack(fill="x", padx=12, pady=(0, 12))
+
+        self.auto_enabled = tk.BooleanVar(value=False)
+        self.auto_source = tk.StringVar(value="Indoor")  # Indoor or Outdoor
+        self.auto_on_th = tk.DoubleVar(value=45.0)        # ON when >= th
+        self.auto_hyst = tk.DoubleVar(value=5.0)          # OFF when <= th - hyst
+        self.auto_state_lbl = ttk.Label(panel, text="Auto state: OFF")
+
+        ttk.Checkbutton(panel, text="Enable auto mode", variable=self.auto_enabled).grid(row=0, column=0, sticky="w")
+        ttk.Label(panel, text="Source:").grid(row=0, column=1, sticky="e")
+        ttk.OptionMenu(panel, self.auto_source, self.auto_source.get(), "Indoor", "Outdoor").grid(row=0, column=2, sticky="w")
+
+        ttk.Label(panel, text="On threshold (µg/m³):").grid(row=1, column=0, sticky="e", pady=6)
+        ttk.Entry(panel, textvariable=self.auto_on_th, width=8).grid(row=1, column=1, sticky="w", pady=6)
+        ttk.Label(panel, text="Hysteresis (µg/m³):").grid(row=1, column=2, sticky="e", pady=6)
+        ttk.Entry(panel, textvariable=self.auto_hyst, width=8).grid(row=1, column=3, sticky="w", pady=6)
+        self.auto_state_lbl.grid(row=0, column=3, sticky="e")
+
+    # ---------------- Relay actions ----------------
+    def _toggle_pin(self, pin):
+        self.relays.toggle(pin)
+        self._refresh_relay_labels()
+
+    def _all_on(self):
+        self.relays.all_on()
+        self._refresh_relay_labels()
+
+    def _all_off(self):
+        self.relays.all_off()
+        self._refresh_relay_labels()
+        self.auto_on = False  # reset auto state as well
+        self.auto_state_lbl.config(text="Auto state: OFF")
+
+    def _refresh_relay_labels(self):
+        for pin, btn in self.relay_btns.items():
+            state = self.relays.is_on(pin)
+            btn.config(text=f"GPIO {pin}: {'ON' if state else 'OFF'}")
+
+    # ---------------- Data & chart ----------------
     def _update_cards(self, section: Section, data: dict):
         section.pm1.value_lbl.config(text=f"{data['pm1']:.1f} µg/m³")
         section.pm25.value_lbl.config(text=f"{data['pm25']:.1f} µg/m³")
         section.pm10.value_lbl.config(text=f"{data['pm10']:.1f} µg/m³")
         section.badge.update_badge(data['pm25'])
 
+    def _auto_logic(self, indoor_pm25: float, outdoor_pm25: float):
+        if not self.auto_enabled.get():
+            return
+        try:
+            th = float(self.auto_on_th.get())
+            hy = float(self.auto_hyst.get())
+        except Exception:
+            return
+        src = self.auto_source.get()
+        pm = indoor_pm25 if src == 'Indoor' else outdoor_pm25
+        # ON when pm >= th; OFF when pm <= th - hy
+        if not self.auto_on and pm >= th:
+            self.relays.all_on()
+            self.auto_on = True
+            self.auto_state_lbl.config(text=f"Auto state: ON ({src} {pm:.1f} ≥ {th})")
+            self._refresh_relay_labels()
+        elif self.auto_on and pm <= (th - hy):
+            self.relays.all_off()
+            self.auto_on = False
+            self.auto_state_lbl.config(text=f"Auto state: OFF ({src} {pm:.1f} ≤ {th - hy})")
+            self._refresh_relay_labels()
+
     def update_data(self):
-        # Read from serial directly
         indoor = self.reader_indoor.read_once()
         outdoor = self.reader_outdoor.read_once()
         ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.last_lbl.config(text=f"Last update: {ts}")
+
+        # Update sections
         self._update_cards(self.indoor, indoor)
         self._update_cards(self.outdoor, outdoor)
 
-        # Keep history
+        # Auto control
+        self._auto_logic(indoor.get('pm25', 0.0), outdoor.get('pm25', 0.0))
+
+        # History
         current_time = datetime.now().strftime("%H:%M:%S")
         self.time_history.append(current_time)
         self.indoor_history.append(indoor['pm25'])
@@ -205,22 +373,23 @@ class PMDashboard:
         self.fig.autofmt_xdate()
         self.canvas.draw()
 
-        # Reschedule safely
+        # Schedule next
         if self.root.winfo_exists():
             self.job = self.root.after(5000, self.update_data)
 
     def on_close(self):
-        # Cancel scheduled job to avoid "invalid command name ...update_data"
         if self.job is not None:
-            try:
-                self.root.after_cancel(self.job)
-            except Exception:
-                pass
-        # Close serials
-        self.reader_indoor.close()
-        self.reader_outdoor.close()
+            try: self.root.after_cancel(self.job)
+            except Exception: pass
+        try: self.reader_indoor.close()
+        except Exception: pass
+        try: self.reader_outdoor.close()
+        except Exception: pass
+        try: self.relays.close()
+        except Exception: pass
         self.root.destroy()
 
+# ---------------- Run ----------------
 if __name__ == "__main__":
     root = tk.Tk()
     app = PMDashboard(root)
