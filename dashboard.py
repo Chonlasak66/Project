@@ -15,7 +15,7 @@ BAUDRATE = 9600
 TIMEOUT = 1
 
 # ========== GPIO / Relay Config ==========
-ACTIVE_LOW = True
+ACTIVE_LOW = False
 RELAY_PINS = [17, 18, 27, 22]  # BCM
 RELAY_NAMES = {17: "Purifier", 18: "Fan", 27: "Vent", 22: "Spare"}
 PIN_POLARITY = {}  # ตัวอย่าง {17: True, 18: True, 27: False, 22: False}

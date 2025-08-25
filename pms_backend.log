@@ -1515,3 +1515,25 @@ google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {
 2025-08-25 00:58:51,229 - INFO - RTDB flush OK (6 rows)
 2025-08-25 00:58:51,987 - INFO - RTDB flush OK (1 rows)
 2025-08-25 00:58:51,987 - INFO - Cleanup done.
+2025-08-25 17:01:59,754 - ERROR - RTDB init failed; CSV-only. [Errno 2] No such file or directory: '/home/chon/project/firebase-adminsdk.json'
+2025-08-25 17:01:59,755 - INFO - Program started.
+2025-08-25 17:03:06,207 - INFO - Cleanup done.
+2025-08-25 17:06:10,385 - INFO - RTDB sink enabled (root='/pm_readings', batch=50, flush=30s)
+2025-08-25 17:06:10,385 - INFO - Program started.
+2025-08-25 17:06:41,045 - INFO - RTDB flush OK (7 rows)
+2025-08-25 17:07:11,120 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:07:41,202 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:08:11,291 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:08:41,371 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:09:11,460 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:09:41,546 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:10:11,641 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:10:41,731 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:11:11,811 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:11:41,891 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:12:11,977 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:12:42,067 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:13:12,145 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:13:42,233 - INFO - RTDB flush OK (6 rows)
+2025-08-25 17:14:05,009 - INFO - RTDB flush OK (5 rows)
+2025-08-25 17:14:05,009 - INFO - Cleanup done.
