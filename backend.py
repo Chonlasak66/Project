@@ -1,50 +1,71 @@
 # -*- coding: utf-8 -*-
-import os, sys, signal, atexit, time, csv, logging, re
+"""
+PM2.5 Backend (RTDB only: pm_readings)
+- PMSx003/3005 2 ตัว (INDOOR/OUTDOOR), non-blocking, ใช้ค่า ATM (bytes 10..15)
+- CSV สำรอง
+- RTDB (pm_readings) แบบลดความถี่: avg ทุก RTDB_PUSH_SECS หรือเมื่อ ΔPM2.5 ≥ RTDB_CHANGE_DELTA
+- ไม่มี pm_readings_1m
+
+ENV (ตัวอย่าง):
+  FIREBASE_CREDENTIALS=/etc/pm25/firebase-adminsdk.json
+  FIREBASE_RTDB_URL=https://<project>-default-rtdb.<region>.firebasedatabase.app
+  READ_INTERVAL_SEC=1
+  RTDB_PUSH_SECS=5
+  RTDB_CHANGE_DELTA=3.0
+  RTDB_BATCH_SIZE=50
+  RTDB_FLUSH_SECS=3
+  SINK_MAX_BUFFER=5000
+  CSV_FILE=pms3005_dual.csv
+  INDOOR_PORT=/dev/ttyAMA0
+  OUTDOOR_PORT=/dev/ttyAMA2
+  DEVICE_ID=<ถ้าอยากกำหนดเอง>
+"""
+import os, sys, time, signal, atexit, csv, logging, re, math, socket
 from pathlib import Path
 from datetime import datetime, timezone
 import serial
 
-# ============== Logging ==============
-logging.basicConfig(
-    filename='pms_backend.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+# ---------- Logging ----------
+logging.basicConfig(filename='pms_backend.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 log = logging.getLogger("pms-backend")
 
-# ============== Serial (PMS) ==============
-INDOOR_PORT = "/dev/ttyAMA0"
-OUTDOOR_PORT = "/dev/ttyAMA2"
-BAUDRATE = 9600
-TIMEOUT = 1
+# ---------- Config ----------
+INDOOR_PORT = os.getenv("INDOOR_PORT", "/dev/ttyAMA0")
+OUTDOOR_PORT = os.getenv("OUTDOOR_PORT", "/dev/ttyAMA2")
+BAUDRATE = int(os.getenv("BAUDRATE", "9600"))
+TIMEOUT = 0  # non-blocking
+READ_INTERVAL_SEC = float(os.getenv("READ_INTERVAL_SEC", "1.0"))
 
-def open_serial(port):
+CSV_FILE = os.getenv("CSV_FILE", "pms3005_dual.csv")
+
+def _auto_device_id():
+    v = os.getenv("DEVICE_ID")
+    if v and v.strip(): return v.strip()
     try:
-        return serial.Serial(port, baudrate=BAUDRATE, timeout=TIMEOUT)
-    except Exception as e:
-        log.warning(f"Cannot open serial {port}: {e}")
-        return None
-
-ser_indoor = open_serial(INDOOR_PORT)
-ser_outdoor = open_serial(OUTDOOR_PORT)
-
-def read_pms(ser):
-    """อ่านเฟรม 32B PMSx003: header 0x42 0x4D, PM1/2.5/10 = bytes 4..9"""
-    if ser is None:
-        return float('nan'), float('nan'), float('nan')
+        hn = socket.gethostname().strip()
+        if hn: return hn
+    except Exception:
+        pass
     try:
-        data = ser.read(32)
-        if len(data) == 32 and data[0] == 0x42 and data[1] == 0x4D:
-            pm1  = int.from_bytes(data[4:6],  'big')
-            pm25 = int.from_bytes(data[6:8],  'big')
-            pm10 = int.from_bytes(data[8:10], 'big')
-            return float(pm1), float(pm25), float(pm10)
-    except Exception as e:
-        log.warning(f"Serial read error: {e}")
-    return float('nan'), float('nan'), float('nan')
+        mid = Path("/etc/machine-id").read_text().strip()
+        if mid: return mid[:8]
+    except Exception:
+        pass
+    return "unknown"
 
-# ============== CSV (local backup) ==============
-CSV_FILE = "pms3005_dual.csv"
+DEVICE_ID = _auto_device_id()
+
+FIREBASE_CREDS = os.getenv("FIREBASE_CREDENTIALS") or str(Path(__file__).with_name("firebase-adminsdk.json"))
+FIREBASE_RTDB_URL = os.getenv("FIREBASE_RTDB_URL", "")
+RTDB_ROOT = os.getenv("RTDB_ROOT", "pm_readings")
+RTDB_PUSH_SECS = float(os.getenv("RTDB_PUSH_SECS", "5"))
+RTDB_CHANGE_DELTA = float(os.getenv("RTDB_CHANGE_DELTA", "3.0"))
+RTDB_BATCH_SIZE = int(os.getenv("RTDB_BATCH_SIZE", "50"))
+RTDB_FLUSH_SECS = int(os.getenv("RTDB_FLUSH_SECS", "3"))
+SINK_MAX_BUFFER = int(os.getenv("SINK_MAX_BUFFER", "5000"))
+
+# ---------- CSV ----------
 def ensure_csv_header(path):
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, mode='a', newline='') as f:
@@ -52,175 +73,130 @@ def ensure_csv_header(path):
         if f.tell() == 0:
             w.writerow([
                 "timestamp_iso_utc",
-                "sensor_indoor_PM1.0","sensor_indoor_PM2.5","sensor_indoor_PM10",
-                "sensor_outdoor_PM1.0","sensor_outdoor_PM2.5","sensor_outdoor_PM10"
+                "indoor_PM1.0","indoor_PM2.5","indoor_PM10",
+                "outdoor_PM1.0","outdoor_PM2.5","outdoor_PM10",
+                "device_id"
             ])
-ensure_csv_header(CSV_FILE)
-
 def append_csv(path, row):
     with open(path, mode='a', newline='') as f:
         csv.writer(f).writerow(row)
+ensure_csv_header(CSV_FILE)
 
-# ============== Firebase Admin / Sinks ==============
-FIREBASE_CREDS = os.getenv("FIREBASE_CREDENTIALS") or str(Path(__file__).with_name("firebase-adminsdk.json"))
-
-# --- Firestore toggle (ปิดเป็นค่าเริ่มต้นเมื่อย้ายไป RTDB) ---
-USE_FIRESTORE = os.getenv("USE_FIRESTORE", "0") == "1"
-FIRESTORE_COLLECTION = os.getenv("FIRESTORE_COLLECTION", "pm_readings")
-FS_BATCH_SIZE = int(os.getenv("FS_BATCH_SIZE", "50"))
-FS_FLUSH_SECS = int(os.getenv("FS_FLUSH_SECS", "30"))
-
-# --- RTDB toggle (เปิดเป็นค่าเริ่มต้น) ---
-USE_RTDB = os.getenv("USE_RTDB", "1") == "1"
-FIREBASE_RTDB_URL = os.getenv(
-    "FIREBASE_RTDB_URL",
-    # ค่าเริ่มต้นตามที่คุณให้มา (แก้เป็นของโปรเจกต์คุณได้เสมอผ่าน ENV)
-    "https://pm25-dashborad-default-rtdb.asia-southeast1.firebasedatabase.app"
-)
-RTDB_ROOT = os.getenv("RTDB_ROOT", "pm_readings")
-RTDB_BATCH_SIZE = int(os.getenv("RTDB_BATCH_SIZE", "50"))
-RTDB_FLUSH_SECS = int(os.getenv("RTDB_FLUSH_SECS", "30"))
-
-# ---- Optional deps ----
+# ---------- Optional Firebase deps ----------
 try:
     import firebase_admin
-    from firebase_admin import credentials
+    from firebase_admin import credentials, db as rtdb
     _fb_ok = True
 except Exception as e:
     log.warning(f"firebase-admin not available: {e}")
     _fb_ok = False
 
-# ---------- Firestore sink ----------
-try:
-    from firebase_admin import firestore
-    from google.oauth2 import service_account
-    from google.auth.transport.requests import Request
-    from google.auth.exceptions import RefreshError
-    from google.api_core.exceptions import PermissionDenied
-    _fs_ok = True
-except Exception:
-    _fs_ok = False
-
-class FirestoreSink:
-    def __init__(self, cred_path, collection, batch_size=50, flush_secs=30):
-        self.enabled = USE_FIRESTORE and _fb_ok and _fs_ok
-        self.buffer, self.last_flush = [], time.time()
-        self.collection = collection
-        self.batch_size, self.flush_secs = batch_size, flush_secs
-        self._auth_broken = False
-        if not self.enabled:
-            return
+# ---------- PMS Reader (non-blocking, ATM) ----------
+class PMSStreamReader:
+    def __init__(self, port: str):
+        self.port = port
+        self.ser = None
+        self.buf = bytearray()
+        self.last = (float('nan'), float('nan'), float('nan'))
+        self._open()
+    def _open(self):
         try:
-            # ตรวจคีย์ล่วงหน้า (กัน invalid_grant)
-            creds = service_account.Credentials.from_service_account_file(
-                cred_path, scopes=["https://www.googleapis.com/auth/datastore"]
-            )
-            creds.refresh(Request())
-            log.info("Firebase credentials OK; token exp=%s", creds.expiry)
-            # init app ถ้ายังไม่เคย
-            if not firebase_admin._apps:
-                firebase_admin.initialize_app(credentials.Certificate(cred_path))
-            self.db = firestore.client()
-            log.info(f"Firestore sink enabled (collection='{collection}', batch={batch_size}, flush={flush_secs}s)")
+            self.ser = serial.Serial(self.port, baudrate=BAUDRATE, timeout=TIMEOUT)
+            try: self.ser.reset_input_buffer()
+            except Exception: pass
+            log.info(f"Serial opened: {self.port}")
         except Exception as e:
-            self.enabled = False
-            self._auth_broken = True
-            log.error("Firestore init failed; CSV-only. %s", e)
-        atexit.register(self.flush)
-
-    def put(self, row: dict):
-        if not self.enabled or self._auth_broken: return
-        self.buffer.append(row)
-        now = time.time()
-        if len(self.buffer) >= self.batch_size or (now - self.last_flush) >= self.flush_secs:
-            self.flush()
-
-    def flush(self):
-        if not self.enabled or self._auth_broken or not self.buffer: return
+            self.ser = None
+            log.warning(f"Cannot open serial {self.port}: {e}")
+    def _parse_frames(self):
+        i = 0
+        while True:
+            j = self.buf.find(b'\x42\x4D', i)
+            if j < 0:
+                if len(self.buf) > 1: self.buf = self.buf[-1:]
+                break
+            if len(self.buf) - j < 32:
+                if j > 0: self.buf = self.buf[j:]
+                break
+            frame = self.buf[j:j+32]; self.buf = self.buf[j+32:]
+            if frame[0] == 0x42 and frame[1] == 0x4D:
+                pm1  = int.from_bytes(frame[10:12], 'big')
+                pm25 = int.from_bytes(frame[12:14], 'big')
+                pm10 = int.from_bytes(frame[14:16], 'big')
+                self.last = (float(pm1), float(pm25), float(pm10))
+            i = 0
+    def read(self):
+        if self.ser is None:
+            self._open(); return self.last
         try:
-            while self.buffer:
-                chunk = self.buffer[:500]  # limit per commit
-                batch = self.db.batch()
-                for r in chunk:
-                    doc_id = f"{r.get('sensor','unknown')}-{r.get('ts','')}"
-                    ref = self.db.collection(self.collection).document(doc_id)
-                    r2 = dict(r); r2["created_at"] = firestore.SERVER_TIMESTAMP
-                    batch.set(ref, r2, merge=True)
-                batch.commit()
-                del self.buffer[:len(chunk)]
-            self.last_flush = time.time()
-            log.info("Firestore flush OK")
-        except PermissionDenied as e:
-            self._auth_broken = True
-            log.error("Firestore permission denied; CSV-only. %s", e)
-        except RefreshError as e:
-            self._auth_broken = True
-            log.error("Firestore auth error; CSV-only. %s", e)
+            n = self.ser.in_waiting
+            if n:
+                self.buf += self.ser.read(n)
+                self._parse_frames()
         except Exception as e:
-            log.warning("Firestore flush failed (buffer kept): %s", e)
+            log.warning(f"Serial read error on {self.port}: {e}")
+            try: self.ser.close()
+            except Exception: pass
+            self.ser = None
+        return self.last
+    def close(self):
+        try:
+            if self.ser: self.ser.close()
+        except Exception: pass
 
-# ---------- Realtime Database sink ----------
-try:
-    from firebase_admin import db as rtdb
-    _rtdb_ok = True
-except Exception:
-    _rtdb_ok = False
-
+# ---------- RTDB Sink (pm_readings) ----------
 class RTDBSink:
     """
-    เขียน RTDB แบบบัฟเฟอร์: update หลายพาธทีเดียว
-    โครงสร้าง: /<root>/<sensor>/<YYYYMMDD>/<HHMMSS> => { ts, pm1, pm25, pm10 }
+    เขียน Realtime Database แบบบัฟเฟอร์ → update หลายพาธครั้งเดียว
+    path: /<root>/<DEVICE_ID>/<sensor>/<YYYYMMDD>/<HHMMSS> => { ts, pm1, pm25, pm10, device_id, n, min25, max25 }
     """
-    def __init__(self, cred_path, db_url, root="pm_readings", batch_size=50, flush_secs=30):
-        self.enabled = USE_RTDB and _fb_ok and _rtdb_ok and bool(db_url)
+    def __init__(self, cred_path, db_url, root, batch_size=50, flush_secs=3, max_buffer=5000):
+        self.enabled = _fb_ok and bool(db_url)
         self.root = root.strip("/")
         self.buffer, self.last_flush = [], time.time()
         self.batch_size, self.flush_secs = batch_size, flush_secs
+        self.max_buffer = max_buffer
+        self._ref = None
         if not self.enabled:
-            if USE_RTDB:
-                log.warning("RTDB sink disabled: check firebase-admin / RTDB URL")
-            return
+            log.warning("RTDB sink disabled: check firebase-admin/URL"); return
         try:
             if not firebase_admin._apps:
                 firebase_admin.initialize_app(credentials.Certificate(cred_path), {"databaseURL": db_url})
-                self._ref = rtdb.reference("/" + self.root)
-            else:
-                # app ถูก init แล้ว (อาจไม่มี databaseURL) → ใช้ reference แบบระบุ url
-                self._ref = rtdb.reference("/" + self.root, url=db_url)
-            log.info(f"RTDB sink enabled (root='/{self.root}', batch={batch_size}, flush={flush_secs}s)")
+            self._ref = rtdb.reference("/" + self.root, url=db_url)
             atexit.register(self.flush)
+            log.info(f"RTDB sink enabled root='/{self.root}', batch={batch_size}, flush={flush_secs}s")
         except Exception as e:
             self.enabled = False
             log.error("RTDB init failed; CSV-only. %s", e)
-
-    def _path_parts_from_iso(self, ts_iso, sensor):
+    def _path(self, ts_iso, sensor):
         ts_clean = ts_iso.replace("Z", "+00:00")
         try:
             dt = datetime.fromisoformat(ts_clean)
-            return f"{sensor}/{dt:%Y%m%d}/{dt:%H%M%S}"
+            ymd = dt.strftime("%Y%m%d"); hms = dt.strftime("%H%M%S")
         except Exception:
             digits = re.sub(r"[^0-9T]", "", ts_iso)
             ymd = digits[:8] if len(digits) >= 8 else "19700101"
             hms = digits[-6:] if len(digits) >= 6 else "000000"
-            return f"{sensor}/{ymd}/{hms}"
-
+        dev = DEVICE_ID or "unknown"
+        return f"{dev}/{sensor}/{ymd}/{hms}"
     def put(self, row: dict):
-        if not self.enabled: return
+        if not (self.enabled and self._ref): return
         self.buffer.append(row)
+        # cap buffer กัน RAM โตเมื่อเน็ตล่มนาน ๆ
+        if len(self.buffer) > self.max_buffer:
+            drop = len(self.buffer) - self.max_buffer
+            del self.buffer[:drop]
+            log.warning("Buffer capped at %d (dropped %d oldest rows)", self.max_buffer, drop)
         now = time.time()
         if len(self.buffer) >= self.batch_size or (now - self.last_flush) >= self.flush_secs:
             self.flush()
-
     def flush(self):
-        if not self.enabled or not self.buffer: return
+        if not (self.enabled and self._ref and self.buffer): return
         try:
             updates = {}
             for r in self.buffer:
-                sensor = r.get("sensor", "unknown")
-                ts = r.get("ts", "")
-                path = self._path_parts_from_iso(ts, sensor)
-                updates[path] = {"ts": ts, "sensor": sensor,
-                                 "pm1": r.get("pm1"), "pm25": r.get("pm25"), "pm10": r.get("pm10")}
+                path = self._path(r["ts"], r["sensor"])
+                updates[path] = {**r, "device_id": DEVICE_ID}
             self._ref.update(updates)
             n = len(updates)
             self.buffer.clear()
@@ -229,26 +205,57 @@ class RTDBSink:
         except Exception as e:
             log.warning("RTDB flush failed (buffer kept): %s", e)
 
-# ============== Cleanup ==============
+# ---------- Rate limiter (avg window + change trigger) ----------
+class _Agg:
+    def __init__(self, push_secs, change_delta):
+        self.push_secs = float(push_secs)
+        self.change_delta = float(change_delta)
+        self.reset()
+        self.last_published_pm25 = math.nan
+        self.last_pub_ts = 0.0
+    def reset(self):
+        self.start_ts = time.time()
+        self.sum1 = self.sum25 = self.sum10 = 0.0
+        self.min25 = float('inf'); self.max25 = float('-inf')
+        self.n = 0
+    def add(self, pm1, pm25, pm10):
+        if any(math.isnan(x) for x in (pm1, pm25, pm10)): return
+        self.sum1 += pm1; self.sum25 += pm25; self.sum10 += pm10; self.n += 1
+        self.min25 = min(self.min25, pm25); self.max25 = max(self.max25, pm25)
+    def should_emit(self):
+        if self.n == 0: return False
+        now = time.time()
+        time_ok = (now - self.last_pub_ts) >= self.push_secs
+        delta_ok = False
+        if not math.isnan(self.last_published_pm25):
+            avg25 = self.sum25 / self.n
+            delta_ok = abs(avg25 - self.last_published_pm25) >= self.change_delta
+        return time_ok or delta_ok
+    def emit(self, sensor, ts_iso):
+        if self.n == 0: return None
+        avg1  = self.sum1 / self.n
+        avg25 = self.sum25 / self.n
+        avg10 = self.sum10 / self.n
+        row = {"ts": ts_iso, "sensor": sensor, "pm1": avg1, "pm25": avg25, "pm10": avg10,
+               "n": self.n, "min25": self.min25, "max25": self.max25}
+        self.last_published_pm25 = avg25
+        self.last_pub_ts = time.time()
+        self.reset()
+        return row
+
+# ---------- Cleanup ----------
 _closed = False
 def cleanup():
     global _closed
     if _closed: return
     _closed = True
-    try:
-        if fs_sink: fs_sink.flush()
+    try: rtdb_sink.flush()
     except Exception: pass
-    try:
-        if rtdb_sink: rtdb_sink.flush()
+    try: reader_in.close()
     except Exception: pass
-    try:
-        if ser_indoor: ser_indoor.close()
-    except Exception: pass
-    try:
-        if ser_outdoor: ser_outdoor.close()
+    try: reader_out.close()
     except Exception: pass
     log.info("Cleanup done.")
-
 atexit.register(cleanup)
 def _sig_exit(signum, frame):
     cleanup(); sys.exit(0)
@@ -256,35 +263,39 @@ for _sig in (signal.SIGINT, signal.SIGTERM):
     try: signal.signal(_sig, _sig_exit)
     except Exception: pass
 
-# ============== Init sinks ==============
-fs_sink = FirestoreSink(FIREBASE_CREDS, FIRESTORE_COLLECTION, FS_BATCH_SIZE, FS_FLUSH_SECS) if USE_FIRESTORE else None
-rtdb_sink = RTDBSink(FIREBASE_CREDS, FIREBASE_RTDB_URL, RTDB_ROOT, RTDB_BATCH_SIZE, RTDB_FLUSH_SECS) if USE_RTDB else None
+# ---------- Init ----------
+reader_in  = PMSStreamReader(INDOOR_PORT)
+reader_out = PMSStreamReader(OUTDOOR_PORT)
+rtdb_sink  = RTDBSink(FIREBASE_CREDS, FIREBASE_RTDB_URL, RTDB_ROOT,
+                      batch_size=RTDB_BATCH_SIZE, flush_secs=RTDB_FLUSH_SECS,
+                      max_buffer=SINK_MAX_BUFFER)
 
-# ============== Main loop ==============
-print("Starting PMS logging → CSV", end="")
-if rtdb_sink and rtdb_sink.enabled: print(" + RTDB", end="")
-if fs_sink and fs_sink.enabled: print(" + Firestore", end="")
-print(". Press Ctrl+C to stop.")
+agg_in  = _Agg(RTDB_PUSH_SECS, RTDB_CHANGE_DELTA)
+agg_out = _Agg(RTDB_PUSH_SECS, RTDB_CHANGE_DELTA)
+
+print(f"Starting PMS backend → CSV + RTDB({RTDB_PUSH_SECS}s avg/Δ{RTDB_CHANGE_DELTA}) "
+      f"as DEVICE_ID='{DEVICE_ID}'. Read every {READ_INTERVAL_SEC}s. Ctrl+C to stop.")
 log.info("Program started.")
 
+# ---------- Main loop ----------
 try:
     while True:
-        vals_in = read_pms(ser_indoor)
-        vals_out = read_pms(ser_outdoor)
+        pm_in  = reader_in.read()
+        pm_out = reader_out.read()
 
         ts_iso = datetime.now(timezone.utc).isoformat(timespec='seconds')
-        append_csv(CSV_FILE, [ts_iso, *vals_in, *vals_out])
+        append_csv(CSV_FILE, [ts_iso, *pm_in, *pm_out, DEVICE_ID])
 
-        # ใส่บัฟเฟอร์ส่งขึ้นคลาวด์
-        row_in  = {"ts": ts_iso, "sensor":"indoor",  "pm1": vals_in[0],  "pm25": vals_in[1],  "pm10": vals_in[2]}
-        row_out = {"ts": ts_iso, "sensor":"outdoor", "pm1": vals_out[0], "pm25": vals_out[1], "pm10": vals_out[2]}
-        if rtdb_sink and rtdb_sink.enabled:
-            rtdb_sink.put(row_in); rtdb_sink.put(row_out)
-        if fs_sink and fs_sink.enabled:
-            fs_sink.put(row_in); fs_sink.put(row_out)
+        # สะสมค่าเพื่อตัดสินใจส่งขึ้น RTDB
+        agg_in.add(*pm_in); agg_out.add(*pm_out)
 
-        print(f"{ts_iso} | In PM2.5={vals_in[1]} | Out PM2.5={vals_out[1]}")
-        time.sleep(10)
+        emit_in  = agg_in.emit("indoor", ts_iso)  if agg_in.should_emit()  else None
+        emit_out = agg_out.emit("outdoor", ts_iso) if agg_out.should_emit() else None
+        for row in (emit_in, emit_out):
+            if row: rtdb_sink.put(row)
+
+        print(f"{ts_iso} | In PM2.5={pm_in[1]} | Out PM2.5={pm_out[1]}")
+        time.sleep(READ_INTERVAL_SEC)
 except KeyboardInterrupt:
     print("\nStopped by user.")
 finally:

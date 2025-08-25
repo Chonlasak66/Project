@@ -1,3 +1,4 @@
 export FIREBASE_CREDENTIALS=/etc/pm25/firebase-adminsdk.json
 export FIREBASE_RTDB_URL=https://pm25-dashborad-default-rtdb.asia-southeast1.firebasedatabase.app
 export USE_RTDB=1
+export DEVICE_ID=lab-raspi-01       # ตั้งชื่ออุปกรณ์ที่อยากให้ใช้บน RTDB

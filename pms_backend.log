@@ -1537,3 +1537,128 @@ google.auth.exceptions.RefreshError: ('invalid_grant: Invalid JWT Signature.', {
 2025-08-25 17:13:42,233 - INFO - RTDB flush OK (6 rows)
 2025-08-25 17:14:05,009 - INFO - RTDB flush OK (5 rows)
 2025-08-25 17:14:05,009 - INFO - Cleanup done.
+2025-08-25 22:34:19,074 - ERROR - RTDB init failed; CSV-only. [Errno 2] No such file or directory: '/home/chon/project/firebase-adminsdk.json'
+2025-08-25 22:34:19,074 - INFO - Program started.
+2025-08-25 22:35:36,072 - INFO - Cleanup done.
+2025-08-25 23:48:14,426 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-25 23:48:14,427 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-25 23:48:14,427 - WARNING - RTDB sink disabled: check firebase-admin or FIREBASE_RTDB_URL
+2025-08-25 23:48:14,427 - INFO - Program started.
+2025-08-25 23:48:54,206 - INFO - Cleanup done.
+2025-08-25 23:49:18,114 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-25 23:49:18,114 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-25 23:49:18,367 - INFO - RTDB sink enabled root='/pm_readings', batch=50, flush=3s
+2025-08-25 23:49:18,367 - INFO - Program started.
+2025-08-25 23:49:21,592 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:21,594 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:22,596 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:22,596 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:23,599 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:23,599 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:24,601 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:24,601 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:25,602 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:25,603 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:26,604 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:26,605 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:27,606 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:27,606 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:28,607 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:28,608 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:29,610 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:49:29,611 - WARNING - RTDB flush failed (buffer kept): Unknown error while making a remote service call: Out of range float values are not JSON compliant
+2025-08-25 23:51:41,068 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-25 23:51:41,068 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-25 23:51:41,304 - INFO - RTDB sink enabled root='/pm_readings', batch=50, flush=3s
+2025-08-25 23:51:41,304 - INFO - Program started.
+2025-08-25 23:51:46,820 - INFO - RTDB flush OK (3 rows)
+2025-08-25 23:51:51,905 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:51:56,986 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:02,069 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:07,153 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:12,243 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:17,334 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:22,427 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:27,512 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:32,599 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:37,675 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:42,759 - INFO - RTDB flush OK (2 rows)
+2025-08-25 23:52:47,854 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:25:56,233 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-26 00:25:56,233 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-26 00:25:56,455 - INFO - RTDB sink enabled root='/pm_readings', batch=50, flush=3s
+2025-08-26 00:25:56,456 - INFO - RTDB sink enabled root='/pm_readings_1m', batch=50, flush=3s
+2025-08-26 00:25:56,456 - INFO - Program started.
+2025-08-26 00:25:59,942 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:02,028 - INFO - RTDB flush OK (3 rows)
+2025-08-26 00:26:03,109 - INFO - RTDB flush OK (3 rows)
+2025-08-26 00:26:06,215 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:07,303 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:09,386 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:12,466 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:12,552 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:15,920 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:18,002 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:19,088 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:22,172 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:23,259 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:25,345 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:28,436 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:28,527 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:31,613 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:26:33,692 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:24,342 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-26 00:28:24,342 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-26 00:28:24,564 - INFO - RTDB sink enabled root='/pm_readings', batch=50, flush=3s
+2025-08-26 00:28:24,564 - INFO - RTDB sink enabled root='/pm_readings_1m', batch=50, flush=3s
+2025-08-26 00:28:24,564 - INFO - Program started.
+2025-08-26 00:28:28,002 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:31,084 - INFO - RTDB flush OK (3 rows)
+2025-08-26 00:28:31,163 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:34,476 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:37,055 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:38,134 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:41,215 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:42,296 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:44,382 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:47,465 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:47,534 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:50,620 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:52,723 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:53,807 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:56,884 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:28:57,963 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:00,059 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:03,136 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:03,219 - INFO - RTDB flush OK (3 rows)
+2025-08-26 00:29:06,299 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:08,381 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:09,459 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:12,540 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:13,619 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:15,699 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:18,772 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:18,868 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:21,953 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:24,083 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:29:25,161 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:52:42,253 - INFO - Serial opened: /dev/ttyAMA0
+2025-08-26 00:52:42,253 - INFO - Serial opened: /dev/ttyAMA2
+2025-08-26 00:52:42,477 - INFO - RTDB sink enabled root='/pm_readings', batch=50, flush=3s
+2025-08-26 00:52:42,478 - INFO - Program started.
+2025-08-26 00:52:47,982 - INFO - RTDB flush OK (3 rows)
+2025-08-26 00:52:53,078 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:52:58,181 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:03,272 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:08,352 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:13,438 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:18,529 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:23,620 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:28,703 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:33,822 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:38,905 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:43,995 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:49,086 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:54,187 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:53:59,278 - INFO - RTDB flush OK (2 rows)
+2025-08-26 00:54:04,375 - INFO - RTDB flush OK (2 rows)
