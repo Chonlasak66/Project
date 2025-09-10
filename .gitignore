@@ -2,3 +2,7 @@ pms3005_dual.csv
 firebase-adminsdk.json
 *.service-account.json
 *firebase*key*.json
+pms3005_dual.csv
+pms_backend
+pyvenv
+env
