@@ -6,3 +6,4 @@ pms3005_dual.csv
 pms_backend
 pyvenv
 env
+.env

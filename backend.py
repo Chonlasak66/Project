@@ -1,69 +1,77 @@
+
 # -*- coding: utf-8 -*-
 """
-PM2.5 Backend (RTDB only: pm_readings)
+PM2.5 Backend (RAW PM + BME280) with Thai Time
 - PMSx003/3005 2 ตัว (INDOOR/OUTDOOR), non-blocking, ใช้ค่า ATM (bytes 10..15)
-- CSV สำรอง
-- RTDB (pm_readings) แบบลดความถี่: avg ทุก RTDB_PUSH_SECS หรือเมื่อ ΔPM2.5 ≥ RTDB_CHANGE_DELTA
-- ไม่มี pm_readings_1m
-
-ENV (ตัวอย่าง):
-  FIREBASE_CREDENTIALS=/etc/pm25/firebase-adminsdk.json
-  FIREBASE_RTDB_URL=https://<project>-default-rtdb.<region>.firebasedatabase.app
-  READ_INTERVAL_SEC=1
-  RTDB_PUSH_SECS=5
-  RTDB_CHANGE_DELTA=3.0
-  RTDB_BATCH_SIZE=50
-  RTDB_FLUSH_SECS=3
-  SINK_MAX_BUFFER=5000
-  CSV_FILE=pms3005_dual.csv
-  INDOOR_PORT=/dev/ttyAMA0
-  OUTDOOR_PORT=/dev/ttyAMA2
-  DEVICE_ID=<ถ้าอยากกำหนดเอง>
+- บันทึก CSV แบบหมุนไฟล์รายวันตาม "วันที่ไทย" (Asia/Bangkok) => CSV_DIR/YYYY-MM-DD.csv
+- ส่งขึ้น Firebase Realtime DB แบบบัฟเฟอร์ (ถ้ามี firebase-admin และ RTDB URL)
+- ปัดทศนิยม: PM เป็นจำนวนเต็ม, BME (T/RH/Pressure) 1 ตำแหน่ง
 """
-import os, sys, time, signal, atexit, csv, logging, re, math, socket
+# auto-load .env if present (no crash if package missing)
+try:
+    from dotenv import load_dotenv, find_dotenv
+    load_dotenv(find_dotenv(), override=False)  # ค่าใน ENV ระบบจะ "ชนะ" .env
+except Exception:
+    pass
+import os, sys, time, signal, atexit, csv, logging, math, socket
 from pathlib import Path
 from datetime import datetime, timezone
-import serial
+try:
+    from zoneinfo import ZoneInfo  # Python 3.9+
+except Exception:
+    # Python เก่ากว่า: pip install backports.zoneinfo
+    from backports.zoneinfo import ZoneInfo
+
+TH_TZ = ZoneInfo("Asia/Bangkok")
 
 # ---------- Logging ----------
-logging.basicConfig(filename='pms_backend.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
-log = logging.getLogger("pms-backend")
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+log = logging.getLogger("pm-backend")
 
-# ---------- Config ----------
-INDOOR_PORT = os.getenv("INDOOR_PORT", "/dev/ttyAMA0")
-OUTDOOR_PORT = os.getenv("OUTDOOR_PORT", "/dev/ttyAMA2")
-BAUDRATE = int(os.getenv("BAUDRATE", "9600"))
-TIMEOUT = 0  # non-blocking
-READ_INTERVAL_SEC = float(os.getenv("READ_INTERVAL_SEC", "1.0"))
+# ---------- Config (ENV for general settings; TIMEZONE is fixed to TH_TZ) ----------
+def env_str(key, default=""):
+    return os.getenv(key, default)
+def env_int(key, default=0):
+    try: return int(os.getenv(key, str(default)))
+    except Exception: return default
+def env_float(key, default=0.0):
+    try: return float(os.getenv(key, str(default)))
+    except Exception: return default
+def env_bool(key, default=True):
+    val = os.getenv(key)
+    if val is None: return default
+    return val.strip().lower() in ("1","true","yes","on")
+def env_hex(key, default="0x76"):
+    try: return int(os.getenv(key, default), 16)
+    except Exception: return int(default, 16)
 
-CSV_FILE = os.getenv("CSV_FILE", "pms3005_dual.csv")
+CSV_DIR           = env_str("CSV_DIR", "csv_logs")
+INDOOR_PORT       = env_str("INDOOR_PORT", "/dev/ttyAMA0")
+OUTDOOR_PORT      = env_str("OUTDOOR_PORT", "/dev/ttyAMA2")
+BAUDRATE          = env_int("BAUDRATE", 9600)
+TIMEOUT           = 0  # non-blocking serial
+READ_INTERVAL_SEC = env_int("READ_INTERVAL_SEC", 1)
 
-def _auto_device_id():
-    v = os.getenv("DEVICE_ID")
-    if v and v.strip(): return v.strip()
-    try:
-        hn = socket.gethostname().strip()
-        if hn: return hn
-    except Exception:
-        pass
-    try:
-        mid = Path("/etc/machine-id").read_text().strip()
-        if mid: return mid[:8]
-    except Exception:
-        pass
-    return "unknown"
+BME280_ADDR       = env_hex("BME280_ADDR", "0x76")
+BME280_ENABLED    = env_bool("BME280_ENABLED", True)
 
-DEVICE_ID = _auto_device_id()
+FIREBASE_CREDENTIALS = env_str("FIREBASE_CREDENTIALS", "/etc/pm25/firebase-adminsdk.json")
+FIREBASE_RTDB_URL    = env_str("FIREBASE_RTDB_URL", "")  # ถ้าเว้นว่างจะไม่ส่ง RTDB
+RTDB_ROOT            = env_str("RTDB_ROOT", "pm_readings")
+RTDB_BATCH_SIZE      = env_int("RTDB_BATCH_SIZE", 50)
+RTDB_FLUSH_SECS      = env_int("RTDB_FLUSH_SECS", 3)
+SINK_MAX_BUFFER      = env_int("SINK_MAX_BUFFER", 5000)
 
-FIREBASE_CREDS = os.getenv("FIREBASE_CREDENTIALS") or str(Path(__file__).with_name("firebase-adminsdk.json"))
-FIREBASE_RTDB_URL = os.getenv("FIREBASE_RTDB_URL", "")
-RTDB_ROOT = os.getenv("RTDB_ROOT", "pm_readings")
-RTDB_PUSH_SECS = float(os.getenv("RTDB_PUSH_SECS", "5"))
-RTDB_CHANGE_DELTA = float(os.getenv("RTDB_CHANGE_DELTA", "3.0"))
-RTDB_BATCH_SIZE = int(os.getenv("RTDB_BATCH_SIZE", "50"))
-RTDB_FLUSH_SECS = int(os.getenv("RTDB_FLUSH_SECS", "3"))
-SINK_MAX_BUFFER = int(os.getenv("SINK_MAX_BUFFER", "5000"))
+DEVICE_ID            = env_str("DEVICE_ID", "")
+if not DEVICE_ID:
+    # หา DEVICE_ID อัตโนมัติ
+    DEVICE_ID = (socket.gethostname() or "unknown").strip()
+
+# ---------- Helpers ----------
+def _r0(x):
+    return x if (isinstance(x, float) and math.isnan(x)) else int(round(float(x)))
+def _r1(x):
+    return x if (isinstance(x, float) and math.isnan(x)) else round(float(x), 1)
 
 # ---------- CSV ----------
 def ensure_csv_header(path):
@@ -72,15 +80,27 @@ def ensure_csv_header(path):
         w = csv.writer(f)
         if f.tell() == 0:
             w.writerow([
-                "timestamp_iso_utc",
+                "timestamp_iso_th",
                 "indoor_PM1.0","indoor_PM2.5","indoor_PM10",
                 "outdoor_PM1.0","outdoor_PM2.5","outdoor_PM10",
+                "bme_temp_C","bme_rh_%","bme_pressure_hPa",
                 "device_id"
             ])
+
 def append_csv(path, row):
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
     with open(path, mode='a', newline='') as f:
         csv.writer(f).writerow(row)
-ensure_csv_header(CSV_FILE)
+
+def csv_path_for(dt):
+    """
+    คืน path ของไฟล์ CSV รายวัน: CSV_DIR/YYYY-MM-DD.csv
+    ใช้ "วันที่ไทย" (Asia/Bangkok) เป็นเกณฑ์ในการหมุนไฟล์
+    """
+    d = dt.astimezone(TH_TZ).date()
+    return os.path.join(CSV_DIR, f"{d.isoformat()}.csv")
+
+CURRENT_CSV_FILE = None
 
 # ---------- Optional Firebase deps ----------
 try:
@@ -92,6 +112,12 @@ except Exception as e:
     _fb_ok = False
 
 # ---------- PMS Reader (non-blocking, ATM) ----------
+try:
+    import serial  # pyserial
+except Exception as e:
+    log.warning(f"pyserial not available: {e}")
+    serial = None
+
 class PMSStreamReader:
     def __init__(self, port: str):
         self.port = port
@@ -100,55 +126,126 @@ class PMSStreamReader:
         self.last = (float('nan'), float('nan'), float('nan'))
         self._open()
     def _open(self):
+        if serial is None:
+            log.warning("serial module missing; PMS will remain NaN")
+            return
         try:
             self.ser = serial.Serial(self.port, baudrate=BAUDRATE, timeout=TIMEOUT)
             try: self.ser.reset_input_buffer()
             except Exception: pass
-            log.info(f"Serial opened: {self.port}")
+            log.info(f"Opened serial {self.port}")
         except Exception as e:
+            log.warning(f"Open serial failed on {self.port}: {e}")
             self.ser = None
-            log.warning(f"Cannot open serial {self.port}: {e}")
-    def _parse_frames(self):
-        i = 0
-        while True:
-            j = self.buf.find(b'\x42\x4D', i)
-            if j < 0:
-                if len(self.buf) > 1: self.buf = self.buf[-1:]
-                break
-            if len(self.buf) - j < 32:
-                if j > 0: self.buf = self.buf[j:]
-                break
-            frame = self.buf[j:j+32]; self.buf = self.buf[j+32:]
-            if frame[0] == 0x42 and frame[1] == 0x4D:
-                pm1  = int.from_bytes(frame[10:12], 'big')
-                pm25 = int.from_bytes(frame[12:14], 'big')
-                pm10 = int.from_bytes(frame[14:16], 'big')
-                self.last = (float(pm1), float(pm25), float(pm10))
-            i = 0
+    def _reopen_if_needed(self):
+        if self.ser is None or not self.ser.is_open:
+            self._open()
     def read(self):
-        if self.ser is None:
-            self._open(); return self.last
+        """Return (pm1, pm25, pm10) ATM as floats; NaN if unavailable"""
         try:
+            self._reopen_if_needed()
+            if self.ser is None: return self.last
             n = self.ser.in_waiting
-            if n:
-                self.buf += self.ser.read(n)
-                self._parse_frames()
+            if n <= 0:
+                return self.last
+            self.buf.extend(self.ser.read(n))
+            # หา header 0x42 0x4D
+            while True:
+                idx = self.buf.find(b"\x42\x4D")
+                if idx < 0:
+                    self.buf.clear()
+                    break
+                # ต้องมีอย่างน้อย 32 bytes
+                if len(self.buf) - idx < 32:
+                    # รออ่านเพิ่ม
+                    if idx > 0: del self.buf[:idx]
+                    break
+                pkt = self.buf[idx:idx+32]
+                # เอาเฉพาะ ATM PM1/2.5/10 (bytes 10..15)
+                pm1  = (pkt[10] << 8) | pkt[11]
+                pm25 = (pkt[12] << 8) | pkt[13]
+                pm10 = (pkt[14] << 8) | pkt[15]
+                self.last = (float(pm1), float(pm25), float(pm10))
+                del self.buf[:idx+32]
+                break
+            return self.last
         except Exception as e:
-            log.warning(f"Serial read error on {self.port}: {e}")
-            try: self.ser.close()
+            log.warning(f"PMS read error on {self.port}: {e}")
+            self.last = (float('nan'), float('nan'), float('nan'))
+            try:
+                if self.ser: self.ser.close()
             except Exception: pass
             self.ser = None
-        return self.last
-    def close(self):
+            return self.last
+
+# ---------- BME280 Reader ----------
+class BME280Reader:
+    """Optional BME280 reader. Tries Adafruit backend first, then smbus2.
+    Returns (temp_C, rh_%, pressure_hPa) as floats; NaN if unavailable."""
+    def __init__(self, addr=0x76, enabled=True):
+        self.addr = addr
+        self.enabled = enabled
+        self.backend = None   # ("adafruit", bme) or ("smbus2", (bus, addr, cal))
+        self._warned = False
+        if enabled:
+            self._init_backend()
+
+    def _init_backend(self):
+        # Try Adafruit
         try:
-            if self.ser: self.ser.close()
-        except Exception: pass
+            import board, busio
+            import adafruit_bme280
+            i2c = busio.I2C(board.SCL, board.SDA)
+            bme = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=self.addr)
+            self.backend = ("adafruit", bme)
+            log.info(f"BME280 via Adafruit backend @ 0x{self.addr:02X}")
+            return
+        except Exception:
+            pass
+        # Try smbus2
+        try:
+            import smbus2, bme280 as bme280_mod
+            bus = smbus2.SMBus(1)
+            cal = bme280_mod.load_calibration_params(bus, self.addr)
+            self.backend = ("smbus2", (bus, self.addr, cal))
+            log.info(f"BME280 via smbus2 backend @ 0x{self.addr:02X}")
+            return
+        except Exception:
+            self.backend = None
+            log.warning("BME280 backend not available")
+
+    def read(self):
+        if not self.enabled:
+            return float('nan'), float('nan'), float('nan')
+        if self.backend is None:
+            if not self._warned:
+                log.warning("BME280 not initialized; will retry. Set BME280_ENABLED=0 to disable.")
+                self._warned = True
+            self._init_backend()
+            if self.backend is None:
+                return float('nan'), float('nan'), float('nan')
+        kind, obj = self.backend
+        try:
+            if kind == "adafruit":
+                bme = obj
+                t = float(bme.temperature)
+                h = float(bme.humidity)
+                p = float(bme.pressure)
+                return t, h, p
+            else:
+                import bme280 as bme280_mod
+                bus, addr, cal = obj
+                s = bme280_mod.sample(bus, addr, cal)
+                return float(s.temperature), float(s.humidity), float(s.pressure)
+        except Exception as e:
+            log.warning(f"BME280 read error: {e}")
+            return float('nan'), float('nan'), float('nan')
 
 # ---------- RTDB Sink (pm_readings) ----------
 class RTDBSink:
     """
     เขียน Realtime Database แบบบัฟเฟอร์ → update หลายพาธครั้งเดียว
-    path: /<root>/<DEVICE_ID>/<sensor>/<YYYYMMDD>/<HHMMSS> => { ts, pm1, pm25, pm10, device_id, n, min25, max25 }
+    path: /<root>/<DEVICE_ID>/<sensor>/<YYYYMMDD>/<HHMMSS> => { ts, pm1, pm25, pm10, device_id, ... }
     """
     def __init__(self, cred_path, db_url, root, batch_size=50, flush_secs=3, max_buffer=5000):
         self.enabled = _fb_ok and bool(db_url)
@@ -157,146 +254,135 @@ class RTDBSink:
         self.batch_size, self.flush_secs = batch_size, flush_secs
         self.max_buffer = max_buffer
         self._ref = None
-        if not self.enabled:
-            log.warning("RTDB sink disabled: check firebase-admin/URL"); return
-        try:
-            if not firebase_admin._apps:
-                firebase_admin.initialize_app(credentials.Certificate(cred_path), {"databaseURL": db_url})
-            self._ref = rtdb.reference("/" + self.root, url=db_url)
-            atexit.register(self.flush)
-            log.info(f"RTDB sink enabled root='/{self.root}', batch={batch_size}, flush={flush_secs}s")
-        except Exception as e:
-            self.enabled = False
-            log.error("RTDB init failed; CSV-only. %s", e)
-    def _path(self, ts_iso, sensor):
-        ts_clean = ts_iso.replace("Z", "+00:00")
-        try:
-            dt = datetime.fromisoformat(ts_clean)
-            ymd = dt.strftime("%Y%m%d"); hms = dt.strftime("%H%M%S")
-        except Exception:
-            digits = re.sub(r"[^0-9T]", "", ts_iso)
-            ymd = digits[:8] if len(digits) >= 8 else "19700101"
-            hms = digits[-6:] if len(digits) >= 6 else "000000"
-        dev = DEVICE_ID or "unknown"
-        return f"{dev}/{sensor}/{ymd}/{hms}"
+
+        if self.enabled:
+            try:
+                if not firebase_admin._apps:
+                    cred = credentials.Certificate(cred_path)
+                    firebase_admin.initialize_app(cred, {"databaseURL": db_url})
+                self._ref = rtdb.reference("/")
+                log.info("Firebase RTDB initialized")
+            except Exception as e:
+                log.warning(f"Init Firebase failed: {e}")
+                self.enabled = False
+
     def put(self, row: dict):
-        if not (self.enabled and self._ref): return
+        if not self.enabled:
+            return
+        if len(self.buffer) >= self.max_buffer:
+            # ตัดทิ้งจากหัว (กัน RAM พอง)
+            self.buffer = self.buffer[-self.max_buffer//2:]
         self.buffer.append(row)
-        # cap buffer กัน RAM โตเมื่อเน็ตล่มนาน ๆ
-        if len(self.buffer) > self.max_buffer:
-            drop = len(self.buffer) - self.max_buffer
-            del self.buffer[:drop]
-            log.warning("Buffer capped at %d (dropped %d oldest rows)", self.max_buffer, drop)
         now = time.time()
         if len(self.buffer) >= self.batch_size or (now - self.last_flush) >= self.flush_secs:
             self.flush()
+
     def flush(self):
-        if not (self.enabled and self._ref and self.buffer): return
+        if not self.enabled or not self.buffer:
+            return
+        batch = self.buffer; self.buffer = []
         try:
             updates = {}
-            for r in self.buffer:
-                path = self._path(r["ts"], r["sensor"])
-                updates[path] = {**r, "device_id": DEVICE_ID}
-            self._ref.update(updates)
-            n = len(updates)
-            self.buffer.clear()
+            for row in batch:
+                ts_iso = row.get("ts","")
+                sensor = row.get("sensor","misc")
+                # path ตามเวลา "ไทย"
+                try:
+                    dt = datetime.fromisoformat(ts_iso)
+                except Exception:
+                    dt = datetime.now(TH_TZ)
+                d = dt.astimezone(TH_TZ)
+                ymd = f"{d.year:04d}{d.month:02d}{d.day:02d}"
+                hms = f"{d.hour:02d}{d.minute:02d}{d.second:02d}"
+                path = f"/{self.root}/{DEVICE_ID}/{sensor}/{ymd}/{hms}"
+                data = dict(row)
+                data["device_id"] = DEVICE_ID
+                updates[path] = data
+            if self._ref is not None:
+                self._ref.update(updates)
             self.last_flush = time.time()
-            log.info("RTDB flush OK (%d rows)", n)
         except Exception as e:
-            log.warning("RTDB flush failed (buffer kept): %s", e)
-
-# ---------- Rate limiter (avg window + change trigger) ----------
-class _Agg:
-    def __init__(self, push_secs, change_delta):
-        self.push_secs = float(push_secs)
-        self.change_delta = float(change_delta)
-        self.reset()
-        self.last_published_pm25 = math.nan
-        self.last_pub_ts = 0.0
-    def reset(self):
-        self.start_ts = time.time()
-        self.sum1 = self.sum25 = self.sum10 = 0.0
-        self.min25 = float('inf'); self.max25 = float('-inf')
-        self.n = 0
-    def add(self, pm1, pm25, pm10):
-        if any(math.isnan(x) for x in (pm1, pm25, pm10)): return
-        self.sum1 += pm1; self.sum25 += pm25; self.sum10 += pm10; self.n += 1
-        self.min25 = min(self.min25, pm25); self.max25 = max(self.max25, pm25)
-    def should_emit(self):
-        if self.n == 0: return False
-        now = time.time()
-        time_ok = (now - self.last_pub_ts) >= self.push_secs
-        delta_ok = False
-        if not math.isnan(self.last_published_pm25):
-            avg25 = self.sum25 / self.n
-            delta_ok = abs(avg25 - self.last_published_pm25) >= self.change_delta
-        return time_ok or delta_ok
-    def emit(self, sensor, ts_iso):
-        if self.n == 0: return None
-        avg1  = self.sum1 / self.n
-        avg25 = self.sum25 / self.n
-        avg10 = self.sum10 / self.n
-        row = {"ts": ts_iso, "sensor": sensor, "pm1": avg1, "pm25": avg25, "pm10": avg10,
-               "n": self.n, "min25": self.min25, "max25": self.max25}
-        self.last_published_pm25 = avg25
-        self.last_pub_ts = time.time()
-        self.reset()
-        return row
+            log.warning(f"RTDB flush failed: {e}")
 
 # ---------- Cleanup ----------
-_closed = False
 def cleanup():
-    global _closed
-    if _closed: return
-    _closed = True
-    try: rtdb_sink.flush()
-    except Exception: pass
-    try: reader_in.close()
-    except Exception: pass
-    try: reader_out.close()
-    except Exception: pass
-    log.info("Cleanup done.")
+    try:
+        pass
+    finally:
+        log.info("Cleanup done.")
+
 atexit.register(cleanup)
-def _sig_exit(signum, frame):
-    cleanup(); sys.exit(0)
-for _sig in (signal.SIGINT, signal.SIGTERM):
-    try: signal.signal(_sig, _sig_exit)
-    except Exception: pass
+signal.signal(signal.SIGTERM, lambda s,f: sys.exit(0))
 
-# ---------- Init ----------
-reader_in  = PMSStreamReader(INDOOR_PORT)
-reader_out = PMSStreamReader(OUTDOOR_PORT)
-rtdb_sink  = RTDBSink(FIREBASE_CREDS, FIREBASE_RTDB_URL, RTDB_ROOT,
-                      batch_size=RTDB_BATCH_SIZE, flush_secs=RTDB_FLUSH_SECS,
-                      max_buffer=SINK_MAX_BUFFER)
+# ---------- Main ----------
+def main():
+    print("[CONFIG]")
+    print("  DEVICE_ID         =", DEVICE_ID)
+    print("  CSV_DIR           =", CSV_DIR)
+    print("  INDOOR_PORT       =", INDOOR_PORT)
+    print("  OUTDOOR_PORT      =", OUTDOOR_PORT)
+    print("  BME280_ADDR       = 0x%02X" % BME280_ADDR)
+    print("  READ_INTERVAL     =", READ_INTERVAL_SEC, "s")
+    print("  FIREBASE_URL      =", FIREBASE_RTDB_URL or "(disabled)")
 
-agg_in  = _Agg(RTDB_PUSH_SECS, RTDB_CHANGE_DELTA)
-agg_out = _Agg(RTDB_PUSH_SECS, RTDB_CHANGE_DELTA)
+    reader_in  = PMSStreamReader(INDOOR_PORT)
+    reader_out = PMSStreamReader(OUTDOOR_PORT)
+    bme_reader = BME280Reader(addr=BME280_ADDR, enabled=BME280_ENABLED)
 
-print(f"Starting PMS backend → CSV + RTDB({RTDB_PUSH_SECS}s avg/Δ{RTDB_CHANGE_DELTA}) "
-      f"as DEVICE_ID='{DEVICE_ID}'. Read every {READ_INTERVAL_SEC}s. Ctrl+C to stop.")
-log.info("Program started.")
+    rtdb_sink = RTDBSink(
+        cred_path=FIREBASE_CREDENTIALS,
+        db_url=FIREBASE_RTDB_URL,
+        root=RTDB_ROOT,
+        batch_size=RTDB_BATCH_SIZE,
+        flush_secs=RTDB_FLUSH_SECS,
+        max_buffer=SINK_MAX_BUFFER,
+    )
 
-# ---------- Main loop ----------
-try:
-    while True:
-        pm_in  = reader_in.read()
-        pm_out = reader_out.read()
+    print(f"Starting PMS backend → CSV + RTDB (RAW PM + BME280 every {READ_INTERVAL_SEC}s, Thai time) as DEVICE_ID='{DEVICE_ID}'. Ctrl+C to stop.")
 
-        ts_iso = datetime.now(timezone.utc).isoformat(timespec='seconds')
-        append_csv(CSV_FILE, [ts_iso, *pm_in, *pm_out, DEVICE_ID])
+    global CURRENT_CSV_FILE
+    try:
+        while True:
+            pm_in  = reader_in.read()
+            pm_out = reader_out.read()
+            bme_t, bme_h, bme_p = bme_reader.read()
 
-        # สะสมค่าเพื่อตัดสินใจส่งขึ้น RTDB
-        agg_in.add(*pm_in); agg_out.add(*pm_out)
+            # Thai time
+            ts_dt  = datetime.now(TH_TZ)
+            ts_iso = ts_dt.isoformat(timespec='seconds')
 
-        emit_in  = agg_in.emit("indoor", ts_iso)  if agg_in.should_emit()  else None
-        emit_out = agg_out.emit("outdoor", ts_iso) if agg_out.should_emit() else None
-        for row in (emit_in, emit_out):
-            if row: rtdb_sink.put(row)
+            # Daily rotation (Thai date)
+            path_today = csv_path_for(ts_dt)
+            if CURRENT_CSV_FILE != path_today:
+                ensure_csv_header(path_today)
+                CURRENT_CSV_FILE = path_today
 
-        print(f"{ts_iso} | In PM2.5={pm_in[1]} | Out PM2.5={pm_out[1]}")
-        time.sleep(READ_INTERVAL_SEC)
-except KeyboardInterrupt:
-    print("\nStopped by user.")
-finally:
-    cleanup()
+            append_csv(CURRENT_CSV_FILE, [
+                ts_iso,
+                _r0(pm_in[0]), _r0(pm_in[1]), _r0(pm_in[2]),
+                _r0(pm_out[0]), _r0(pm_out[1]), _r0(pm_out[2]),
+                _r1(bme_t), _r1(bme_h), _r1(bme_p),
+                DEVICE_ID
+            ])
+
+            # RTDB puts (indoor/outdoor always if valid; BME only if not NaN)
+            if all(not math.isnan(x) for x in pm_in):
+                rtdb_sink.put({"ts": ts_iso, "sensor": "indoor",
+                               "pm1": _r0(pm_in[0]), "pm25": _r0(pm_in[1]), "pm10": _r0(pm_in[2]),
+                               "n": 1, "min25": _r0(pm_in[1]), "max25": _r0(pm_in[1])})
+            if all(not math.isnan(x) for x in pm_out):
+                rtdb_sink.put({"ts": ts_iso, "sensor": "outdoor",
+                               "pm1": _r0(pm_out[0]), "pm25": _r0(pm_out[1]), "pm10": _r0(pm_out[2]),
+                               "n": 1, "min25": _r0(pm_out[1]), "max25": _r0(pm_out[1])})
+            if not math.isnan(bme_t) and not math.isnan(bme_h):
+                rtdb_sink.put({"ts": ts_iso, "sensor": "bme280",
+                               "temp_c": _r1(bme_t), "rh": _r1(bme_h), "pressure_hPa": _r1(bme_p)})
+
+            # Console line
+            print(f"{ts_iso} | In PM2.5={_r0(pm_in[1])} | Out PM2.5={_r0(pm_out[1])} | T={_r1(bme_t)}°C RH={_r1(bme_h)}%")
+            time.sleep(READ_INTERVAL_SEC)
+    except KeyboardInterrupt:
+        print("\nStopped by user.")
+
+if __name__ == "__main__":
+    main()
