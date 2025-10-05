@@ -14,6 +14,8 @@ try:
 except Exception:
     pass
 import os, sys, time, signal, atexit, csv, logging, math, socket
+import json
+from glob import glob
 from pathlib import Path
 from datetime import datetime, timezone
 try:
@@ -62,6 +64,23 @@ RTDB_BATCH_SIZE      = env_int("RTDB_BATCH_SIZE", 50)
 RTDB_FLUSH_SECS      = env_int("RTDB_FLUSH_SECS", 3)
 SINK_MAX_BUFFER      = env_int("SINK_MAX_BUFFER", 5000)
 
+# ---------- Google Drive (batch upload; OAuth-first) ----------
+def _env_path(default):
+    try:
+        return os.path.join(CSV_DIR, default)
+    except Exception:
+        return default
+GDRIVE_ENABLED                = env_bool("GDRIVE_ENABLED", False)
+GDRIVE_AUTH                   = env_str("GDRIVE_AUTH", "oauth")  # oauth | service_account
+GDRIVE_OAUTH_CLIENT_SECRETS   = env_str("GDRIVE_OAUTH_CLIENT_SECRETS", "credentials.json")
+GDRIVE_TOKEN_PATH             = env_str("GDRIVE_TOKEN_PATH", "token.json")
+GDRIVE_SA_KEY                 = env_str("GDRIVE_SA_KEY", "/etc/pm25/gdrive-sa.json")
+GDRIVE_FOLDER_ID              = env_str("GDRIVE_FOLDER_ID", "")
+GDRIVE_FOLDER_NAME            = env_str("GDRIVE_FOLDER_NAME", "pm25-logs")
+GDRIVE_UPLOAD_MODE            = env_str("GDRIVE_UPLOAD_MODE", "both")  # at_start | at_exit | both
+GDRIVE_QUEUE_PATH             = env_str("GDRIVE_QUEUE_PATH", _env_path("upload_queue.json"))
+GDRIVE_DEBUG                  = env_bool("GDRIVE_DEBUG", True)
+
 DEVICE_ID            = env_str("DEVICE_ID", "")
 if not DEVICE_ID:
     # หา DEVICE_ID อัตโนมัติ
@@ -102,6 +121,7 @@ def csv_path_for(dt):
 
 CURRENT_CSV_FILE = None
 
+_UPLOADER = None
 # ---------- Optional Firebase deps ----------
 try:
     import firebase_admin
@@ -111,6 +131,18 @@ except Exception as e:
     log.warning(f"firebase-admin not available: {e}")
     _fb_ok = False
 
+# ---------- Optional Google Drive deps ----------
+_gdrive_ok = False
+try:
+    from googleapiclient.discovery import build
+    from googleapiclient.http import MediaFileUpload
+    from google.oauth2 import service_account as gsa
+    from google.oauth2.credentials import Credentials as UserCreds
+    from google.auth.transport.requests import Request
+    _gdrive_ok = True
+except Exception as e:
+    log.warning(f"google drive libs not available: {e}")
+    _gdrive_ok = False
 # ---------- PMS Reader (non-blocking, ATM) ----------
 try:
     import serial  # pyserial
@@ -304,13 +336,161 @@ class RTDBSink:
         except Exception as e:
             log.warning(f"RTDB flush failed: {e}")
 
+# ---------- Google Drive batch uploader (OAuth/SA) ----------
+class DriveUploader:
+    SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+    def __init__(self, enabled=False, auth="oauth",
+                 sa_key="", oauth_client="", token_path="",
+                 folder_id="", folder_name="pm25-logs",
+                 queue_path="", debug=True):
+        self.enabled = bool(enabled) and _gdrive_ok
+        self.auth = (auth or "oauth").strip()
+        self.sa_key = sa_key
+        self.oauth_client = oauth_client
+        self.token_path = token_path
+        self.folder_id = (folder_id or "").strip()
+        self.folder_name = (folder_name or "pm25-logs").strip()
+        self.queue_path = queue_path or _env_path("upload_queue.json")
+        self.debug = bool(debug)
+        self.service = None
+        self._known_ids = {}
+        self._queue = []
+        if not self.enabled:
+            return
+        try:
+            self._init_service()
+            self._ensure_folder()
+            self._load_queue()
+            if self.debug: log.info(f"[GDRIVE] Ready → folder_id={self.folder_id}, auth={self.auth}")
+        except Exception as e:
+            log.warning(f"[GDRIVE] init failed: {e}")
+            self.enabled = False
+
+    def _init_service(self):
+        if self.auth == "service_account":
+            creds = gsa.Credentials.from_service_account_file(self.sa_key, scopes=self.SCOPES)
+        else:
+            creds = None
+            if os.path.exists(self.token_path):
+                creds = UserCreds.from_authorized_user_file(self.token_path, self.SCOPES)
+            if not creds or not creds.valid:
+                if creds and creds.expired and creds.refresh_token:
+                    if self.debug: log.info("[GDRIVE] refreshing OAuth token...")
+                    creds.refresh(Request())
+                else:
+                    raise RuntimeError("OAuth token missing; create token.json with oauth_token_gen.py")
+        self.service = build("drive", "v3", credentials=creds, cache_discovery=False)
+
+    def _ensure_folder(self):
+        if self.folder_id:
+            return
+        q = f"name = '{self.folder_name}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
+        res = self.service.files().list(q=q, spaces="drive", fields="files(id,name)", pageSize=1).execute()
+        files = res.get("files", [])
+        if files:
+            self.folder_id = files[0]["id"]
+        else:
+            meta = {"name": self.folder_name, "mimeType": "application/vnd.google-apps.folder"}
+            created = self.service.files().create(body=meta, fields="id").execute()
+            self.folder_id = created["id"]
+
+    def _load_queue(self):
+        try:
+            if os.path.exists(self.queue_path):
+                with open(self.queue_path, "r", encoding="utf-8") as f:
+                    self._queue = json.load(f) or []
+            else:
+                self._queue = []
+            if self.debug: log.info(f"[GDRIVE] queue loaded: {len(self._queue)} item(s) from {self.queue_path}")
+        except Exception as e:
+            self._queue = []
+            log.warning(f"[GDRIVE] load queue failed: {e}")
+
+    def _save_queue(self):
+        try:
+            Path(self.queue_path).parent.mkdir(parents=True, exist_ok=True)
+            with open(self.queue_path, "w", encoding="utf-8") as f:
+                json.dump(self._queue, f, ensure_ascii=False, indent=2)
+            if self.debug: log.info(f"[GDRIVE] queue saved: {len(self._queue)} item(s)")
+        except Exception as e:
+            log.warning(f"[GDRIVE] save queue failed: {e}")
+
+    def _find_file_id(self, name):
+        if name in self._known_ids:
+            return self._known_ids[name]
+        q = f"name = '{name}' and '{self.folder_id}' in parents and trashed = false"
+        res = self.service.files().list(q=q, spaces="drive", fields="files(id,name)", pageSize=1).execute()
+        files = res.get("files", [])
+        if files:
+            fid = files[0]["id"]
+            self._known_ids[name] = fid
+            return fid
+        return None
+
+    def upload_now(self, path):
+        if not self.enabled: return False
+        if not path or not os.path.exists(path): return False
+        fname = os.path.basename(path)
+        if self.debug: log.info(f"[GDRIVE] uploading: {fname}")
+        media = MediaFileUpload(path, mimetype="text/csv", resumable=False)
+        fid = self._find_file_id(fname)
+        if fid:
+            self.service.files().update(fileId=fid, media_body=media).execute()
+            if self.debug: log.info(f"[GDRIVE] updated: {fname}")
+        else:
+            meta = {"name": fname, "parents": [self.folder_id]}
+            self.service.files().create(body=meta, media_body=media, fields="id").execute()
+            if self.debug: log.info(f"[GDRIVE] created: {fname}")
+        return True
+
+    def enqueue(self, path):
+        if not path: return
+        p = os.path.abspath(path)
+        if os.path.exists(p) and p not in self._queue:
+            self._queue.append(p)
+            if self.debug: log.info(f"[GDRIVE] enqueued: {os.path.basename(p)}")
+            self._save_queue()
+
+    def process_queue(self):
+        if not self.enabled: return
+        if not self._queue:
+            if self.debug: log.info("[GDRIVE] queue empty")
+            return
+        newq = []
+        for p in list(self._queue):
+            ok = False
+            try:
+                ok = self.upload_now(p)
+            except Exception as e:
+                log.warning(f"[GDRIVE] upload failed for {p}: {e}")
+                ok = False
+            if not ok:
+                newq.append(p)
+        self._queue = newq
+        self._save_queue()
+        if self.debug: log.info(f"[GDRIVE] queue after process: {len(self._queue)} item(s)")
+
+    def sync_local_csvs(self, csv_dir):
+        try:
+            for p in sorted(glob(os.path.join(csv_dir, "*.csv"))):
+                self.enqueue(p)
+            self.process_queue()
+        except Exception as e:
+            log.warning(f"[GDRIVE] sync_local_csvs failed: {e}")
+
 # ---------- Cleanup ----------
 def cleanup():
+    gdrive_finalize(_gdrive, CURRENT_CSV_FILE)
     try:
-        pass
+        if _UPLOADER and getattr(_UPLOADER, "enabled", False) and GDRIVE_UPLOAD_MODE in ("at_exit","both"):
+            try:
+                if CURRENT_CSV_FILE:
+                    _UPLOADER.enqueue(CURRENT_CSV_FILE)
+                _UPLOADER.process_queue()
+            except Exception as e:
+                log.warning(f"[GDRIVE] finalize failed: {e}")
     finally:
         log.info("Cleanup done.")
-
 atexit.register(cleanup)
 signal.signal(signal.SIGTERM, lambda s,f: sys.exit(0))
 
@@ -325,6 +505,10 @@ def main():
     print("  READ_INTERVAL     =", READ_INTERVAL_SEC, "s")
     print("  FIREBASE_URL      =", FIREBASE_RTDB_URL or "(disabled)")
 
+    print("  GDRIVE_ENABLED    =", GDRIVE_ENABLED)
+    print("  GDRIVE_AUTH       =", GDRIVE_AUTH)
+    print("  GDRIVE_FOLDER_NAME=", GDRIVE_FOLDER_NAME)
+    print("  GDRIVE_UPLOAD_MODE=", GDRIVE_UPLOAD_MODE)
     reader_in  = PMSStreamReader(INDOOR_PORT)
     reader_out = PMSStreamReader(OUTDOOR_PORT)
     bme_reader = BME280Reader(addr=BME280_ADDR, enabled=BME280_ENABLED)
@@ -355,6 +539,12 @@ def main():
             path_today = csv_path_for(ts_dt)
             if CURRENT_CSV_FILE != path_today:
                 ensure_csv_header(path_today)
+                # enqueue yesterday file on rotation
+                if _UPLOADER and getattr(_UPLOADER, "enabled", False) and CURRENT_CSV_FILE:
+                    try:
+                        _UPLOADER.enqueue(CURRENT_CSV_FILE)
+                    except Exception as e:
+                        log.warning(f"[GDRIVE] enqueue old csv failed: {e}")
                 CURRENT_CSV_FILE = path_today
 
             append_csv(CURRENT_CSV_FILE, [
@@ -383,6 +573,10 @@ def main():
             time.sleep(READ_INTERVAL_SEC)
     except KeyboardInterrupt:
         print("\nStopped by user.")
+from drive_hook import gdrive_setup, gdrive_finalize
+
+# ... โค้ด config ของคุณ ...
+_gdrive = gdrive_setup(csv_dir=CSV_DIR)  # จะพิมพ์ [GDRIVE] CONFIG และ Ready ให้เห็น
 
 if __name__ == "__main__":
     main()

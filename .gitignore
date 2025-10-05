@@ -1,9 +1,41 @@
-pms3005_dual.csv
-firebase-adminsdk.json
-*.service-account.json
-*firebase*key*.json
-pms3005_dual.csv
-pms_backend
-pyvenv
-env
+# --- Secrets & local config ---
 .env
+.env.*
+credentials.json
+token.json
+gdrive-sa.json
+firebase-adminsdk.json
+*service-account*.json
+*firebase*key*.json
+
+# --- Data & logs ---
+csv_logs/
+*.csv
+upload_queue.json
+.gdrive_manifest.json
+
+# --- Python build/cache ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# --- Virtualenvs ---
+.venv/
+venv/
+env/
+env*/
+pyvenv/
+
+# --- Editors/OS ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Binaries / misc ---
+pms_backend/
+*.service
